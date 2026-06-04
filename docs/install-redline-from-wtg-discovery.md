@@ -4,7 +4,27 @@ These steps assume WTG is already publishing MQTT telemetry and Home Assistant h
 
 You should already see a WTG GPU card or WTG GPU entities in Home Assistant before starting this guide.
 
-## 1. Confirm WTG entities exist
+Redline does not replace WTG discovery. Redline adds Home Assistant template entities and dashboard cards on top of the WTG entities that already exist.
+
+## What you will install
+
+This repo provides two things:
+
+```text
+packages/wtg_gpu_redline.yaml
+```
+
+A Home Assistant package that creates Redline template entities.
+
+```text
+dashboards/redline-basic.yaml
+```
+
+A basic dashboard card example that uses those Redline entities.
+
+The package file is a starting template. Copy it into your Home Assistant `/config/packages/` directory, then edit the source entity IDs if your WTG device name, hostname, node ID, or GPU index is different from the example.
+
+## 1. Confirm your WTG entity IDs
 
 In Home Assistant, open:
 
@@ -15,10 +35,12 @@ Developer Tools -> States
 Search for:
 
 ```text
-wtg_bench_gpu_0
+wtg
 ```
 
-For the current bench example, these entities should exist:
+Find the WTG GPU entities that Home Assistant created from MQTT discovery. They may include your hostname or WTG node ID.
+
+For example, if the WTG node ID is `bench`, the discovered entities may look like this:
 
 ```text
 sensor.wtg_bench_gpu_0_gpu_0_gpu_utilization
@@ -31,9 +53,116 @@ sensor.wtg_bench_gpu_0_gpu_0_vram_total
 sensor.wtg_bench_gpu_0_gpu_0_performance_state
 ```
 
-If your entity IDs are different, edit `packages/wtg_gpu_redline.yaml` before installing it.
+For a different host or node ID, replace `bench` with your discovered entity prefix.
 
-## 2. Enable Home Assistant packages
+Example pattern:
+
+```text
+sensor.wtg_<node_id>_gpu_0_gpu_0_gpu_utilization
+sensor.wtg_<node_id>_gpu_0_gpu_0_memory_controller_utilization
+sensor.wtg_<node_id>_gpu_0_gpu_0_power
+sensor.wtg_<node_id>_gpu_0_gpu_0_power_limit
+sensor.wtg_<node_id>_gpu_0_gpu_0_temperature
+sensor.wtg_<node_id>_gpu_0_gpu_0_vram_used
+sensor.wtg_<node_id>_gpu_0_gpu_0_vram_total
+sensor.wtg_<node_id>_gpu_0_gpu_0_performance_state
+```
+
+Keep this browser tab open. You will use these entity IDs when editing the Redline package.
+
+## 2. Create the packages directory
+
+Home Assistant packages live under:
+
+```text
+/config/packages/
+```
+
+You can create this directory with a file editor add-on or from a Home Assistant terminal.
+
+### Option A: File editor or Studio Code Server
+
+Use one of these Home Assistant add-ons if installed:
+
+```text
+File editor
+Studio Code Server
+Samba share
+```
+
+Create the folder:
+
+```text
+/config/packages/
+```
+
+### Option B: Terminal
+
+If you prefer the command line, install or open a Home Assistant terminal add-on, such as:
+
+```text
+Terminal & SSH
+Advanced SSH & Web Terminal
+```
+
+Run:
+
+```sh
+mkdir -p /config/packages
+```
+
+A terminal is not required if you are using File editor, Studio Code Server, or Samba.
+
+## 3. Copy the Redline package from this repo
+
+Create this file in Home Assistant:
+
+```text
+/config/packages/wtg_gpu_redline.yaml
+```
+
+Copy the contents of this repo file into it:
+
+```text
+packages/wtg_gpu_redline.yaml
+```
+
+Direct repo path:
+
+```text
+https://github.com/novovictus/wtg-ha-redline/blob/main/packages/wtg_gpu_redline.yaml
+```
+
+Important: before saving, edit the package if your discovered WTG entity IDs are different from the example.
+
+The default example currently references:
+
+```text
+sensor.wtg_bench_gpu_0_gpu_0_gpu_utilization
+sensor.wtg_bench_gpu_0_gpu_0_memory_controller_utilization
+sensor.wtg_bench_gpu_0_gpu_0_power
+sensor.wtg_bench_gpu_0_gpu_0_power_limit
+sensor.wtg_bench_gpu_0_gpu_0_temperature
+sensor.wtg_bench_gpu_0_gpu_0_vram_used
+sensor.wtg_bench_gpu_0_gpu_0_vram_total
+sensor.wtg_bench_gpu_0_gpu_0_performance_state
+```
+
+If your entities use another node name, replace those IDs with your actual entity IDs from Step 1.
+
+For example:
+
+```text
+sensor.wtg_bench_gpu_0_gpu_0_power
+```
+
+might become:
+
+```text
+sensor.wtg_myhostname_gpu_0_gpu_0_power
+```
+
+## 4. Enable Home Assistant packages
 
 Open:
 
@@ -56,30 +185,6 @@ homeassistant:
 ```
 
 Do not create a second `homeassistant:` block.
-
-## 3. Create the packages directory
-
-Create this directory if it does not already exist:
-
-```text
-/config/packages/
-```
-
-## 4. Install the Redline package
-
-Create this file:
-
-```text
-/config/packages/wtg_gpu_redline.yaml
-```
-
-Copy the contents of:
-
-```text
-packages/wtg_gpu_redline.yaml
-```
-
-into that file.
 
 ## 5. Check Home Assistant configuration
 
@@ -127,6 +232,8 @@ sensor.wtg_bench_redline_score
 sensor.wtg_bench_redline_state
 sensor.wtg_bench_redline_summary
 ```
+
+If you changed the Redline entity names or unique IDs in the package, your entity IDs may differ.
 
 ## 8. Add the dashboard cards
 
@@ -181,9 +288,11 @@ entities:
     name: Perf State
 ```
 
+If your WTG source entities are different from the example, edit the entity card too.
+
 ## 9. Expected idle result
 
-At idle, the bench should normally show:
+At idle, the system should normally show:
 
 ```text
 State: IDLE
