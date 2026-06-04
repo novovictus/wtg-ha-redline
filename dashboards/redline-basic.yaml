@@ -3,9 +3,13 @@
 # Stock Home Assistant cards only. No custom cards required.
 #
 # Requires packages/wtg_gpu_redline.yaml or equivalent entities.
+#
+# USER EDIT REQUIRED:
+# Replace YOUR_HOSTNAME with the advertised hostname in your discovered WTG
+# Home Assistant entity IDs.
 
 - type: gauge
-  entity: sensor.wtg_bench_redline_score
+  entity: sensor.wtg_redline_score
   name: WTG GPU Redline
   min: 0
   max: 100
@@ -18,21 +22,23 @@
 - type: entities
   title: WTG GPU Redline
   entities:
-    - entity: sensor.wtg_bench_redline_state
+    - entity: sensor.wtg_redline_state
       name: State
-    - entity: sensor.wtg_bench_redline_score
+    - entity: sensor.wtg_redline_score
       name: Redline Score
-    - entity: binary_sensor.wtg_bench_sus
+    - entity: binary_sensor.wtg_redline_sus
       name: SUS Override
-    - entity: sensor.wtg_bench_gpu_utilization
+    - entity: sensor.wtg_redline_summary
+      name: Summary
+    - entity: sensor.wtg_YOUR_HOSTNAME_gpu_0_gpu_0_gpu_utilization
       name: GPU
-    - entity: sensor.wtg_bench_memory_controller
+    - entity: sensor.wtg_YOUR_HOSTNAME_gpu_0_gpu_0_memory_controller_utilization
       name: Memory Controller
-    - entity: sensor.wtg_bench_power
+    - entity: sensor.wtg_YOUR_HOSTNAME_gpu_0_gpu_0_power
       name: Power
-    - entity: sensor.wtg_bench_power_limit
+    - entity: sensor.wtg_YOUR_HOSTNAME_gpu_0_gpu_0_power_limit
       name: Power Limit
-    - entity: sensor.wtg_bench_temperature
+    - entity: sensor.wtg_YOUR_HOSTNAME_gpu_0_gpu_0_temperature
       name: Temperature
-    - entity: sensor.wtg_bench_perf_state
+    - entity: sensor.wtg_YOUR_HOSTNAME_gpu_0_gpu_0_performance_state
       name: Perf State
