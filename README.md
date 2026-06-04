@@ -33,6 +33,20 @@ Redline can use those fields to create Home Assistant-side visual concepts such 
 
 The Redline state model is intentionally separate from WTG. A Home Assistant template may classify a display state as `LIMIT` or `SUS`, but that does not mean WTG inferred that condition internally.
 
+## Current WTG MQTT availability
+
+The latest published WTG release is still the previous beta release line. WTG MQTT support is available from the WTG `main` branch after the MQTT work was merged, but it is not yet published as a packaged release artifact.
+
+For now, use this repo as a dashboard/example workspace for source-built WTG MQTT testing.
+
+The intended flow is:
+
+```text
+build WTG from main -> publish MQTT telemetry -> test Redline cards in Home Assistant -> publish the next demo-ready WTG release
+```
+
+Once the next WTG release is cut, this README can be updated to point users at the release artifact instead of source-built `main`.
+
 ## Expected MQTT telemetry shape
 
 The current examples assume that WTG publishes one JSON state payload per GPU to a topic like:
@@ -74,10 +88,10 @@ This repo does not replace WTG and does not implement the MQTT publisher.
 
 Use WTG to publish telemetry. Use this repo to experiment with Home Assistant display examples built from that telemetry.
 
-For WTG releases, source, and MQTT implementation details, see:
+For WTG source, release artifacts, and MQTT implementation details, see:
 
 - <https://github.com/novovictus/WTG>
-- <https://github.com/novovictus/WTG/releases/latest>
+- <https://github.com/novovictus/WTG/releases>
 
 Detailed WTG configuration is intentionally not duplicated here. WTG MQTT and Home Assistant setup are expected to evolve with the WTG app and eGUI configurator.
 
@@ -137,4 +151,4 @@ wtg-ha-redline/
 
 ## Status
 
-Early scaffold. Expect names, thresholds, and dashboard examples to change as the WTG MQTT/eGUI workflow settles.
+Early scaffold. MQTT publishing currently depends on a source build of WTG from `main`. Expect names, thresholds, and dashboard examples to change as the WTG MQTT/eGUI workflow settles.
