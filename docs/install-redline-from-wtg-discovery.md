@@ -22,7 +22,7 @@ dashboards/redline-basic.yaml
 
 A basic dashboard card example that uses those Redline entities.
 
-The package file is a starting template. Copy it into your Home Assistant `/config/packages/` directory, then edit the source entity IDs if your WTG device name, hostname, node ID, or GPU index is different from the example.
+The package file is a starting template. Copy it into your Home Assistant `/config/packages/` directory, then edit the source entity IDs if your WTG advertised hostname or GPU index is different from the example.
 
 ## 1. Confirm your WTG entity IDs
 
@@ -38,9 +38,13 @@ Search for:
 wtg
 ```
 
-Find the WTG GPU entities that Home Assistant created from MQTT discovery. They may include your hostname or WTG node ID.
+WTG discovery creates deterministic Home Assistant entity IDs that begin with `wtg_` followed by the advertised hostname. For example, if WTG advertises the hostname `bench`, the entity IDs begin with:
 
-For example, if the WTG node ID is `bench`, the discovered entities may look like this:
+```text
+sensor.wtg_bench_
+```
+
+For the default single-GPU example, the discovered entities look like this:
 
 ```text
 sensor.wtg_bench_gpu_0_gpu_0_gpu_utilization
@@ -53,19 +57,19 @@ sensor.wtg_bench_gpu_0_gpu_0_vram_total
 sensor.wtg_bench_gpu_0_gpu_0_performance_state
 ```
 
-For a different host or node ID, replace `bench` with your discovered entity prefix.
+For another advertised hostname, replace `bench` with that hostname.
 
 Example pattern:
 
 ```text
-sensor.wtg_<node_id>_gpu_0_gpu_0_gpu_utilization
-sensor.wtg_<node_id>_gpu_0_gpu_0_memory_controller_utilization
-sensor.wtg_<node_id>_gpu_0_gpu_0_power
-sensor.wtg_<node_id>_gpu_0_gpu_0_power_limit
-sensor.wtg_<node_id>_gpu_0_gpu_0_temperature
-sensor.wtg_<node_id>_gpu_0_gpu_0_vram_used
-sensor.wtg_<node_id>_gpu_0_gpu_0_vram_total
-sensor.wtg_<node_id>_gpu_0_gpu_0_performance_state
+sensor.wtg_<advertised_hostname>_gpu_0_gpu_0_gpu_utilization
+sensor.wtg_<advertised_hostname>_gpu_0_gpu_0_memory_controller_utilization
+sensor.wtg_<advertised_hostname>_gpu_0_gpu_0_power
+sensor.wtg_<advertised_hostname>_gpu_0_gpu_0_power_limit
+sensor.wtg_<advertised_hostname>_gpu_0_gpu_0_temperature
+sensor.wtg_<advertised_hostname>_gpu_0_gpu_0_vram_used
+sensor.wtg_<advertised_hostname>_gpu_0_gpu_0_vram_total
+sensor.wtg_<advertised_hostname>_gpu_0_gpu_0_performance_state
 ```
 
 Keep this browser tab open. You will use these entity IDs when editing the Redline package.
@@ -148,7 +152,7 @@ sensor.wtg_bench_gpu_0_gpu_0_vram_total
 sensor.wtg_bench_gpu_0_gpu_0_performance_state
 ```
 
-If your entities use another node name, replace those IDs with your actual entity IDs from Step 1.
+If your advertised hostname is not `bench`, replace `wtg_bench` with your actual discovered prefix.
 
 For example:
 
