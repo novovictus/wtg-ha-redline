@@ -1,0 +1,210 @@
+# Install Redline after WTG discovery is working
+
+These steps assume WTG is already publishing MQTT telemetry and Home Assistant has already discovered the WTG GPU device.
+
+You should already see a WTG GPU card or WTG GPU entities in Home Assistant before starting this guide.
+
+## 1. Confirm WTG entities exist
+
+In Home Assistant, open:
+
+```text
+Developer Tools -> States
+```
+
+Search for:
+
+```text
+wtg_bench_gpu_0
+```
+
+For the current bench example, these entities should exist:
+
+```text
+sensor.wtg_bench_gpu_0_gpu_0_gpu_utilization
+sensor.wtg_bench_gpu_0_gpu_0_memory_controller_utilization
+sensor.wtg_bench_gpu_0_gpu_0_power
+sensor.wtg_bench_gpu_0_gpu_0_power_limit
+sensor.wtg_bench_gpu_0_gpu_0_temperature
+sensor.wtg_bench_gpu_0_gpu_0_vram_used
+sensor.wtg_bench_gpu_0_gpu_0_vram_total
+sensor.wtg_bench_gpu_0_gpu_0_performance_state
+```
+
+If your entity IDs are different, edit `packages/wtg_gpu_redline.yaml` before installing it.
+
+## 2. Enable Home Assistant packages
+
+Open:
+
+```text
+/config/configuration.yaml
+```
+
+If there is no `homeassistant:` block, add this:
+
+```yaml
+homeassistant:
+  packages: !include_dir_named packages
+```
+
+If a `homeassistant:` block already exists, add only the `packages:` line under the existing block:
+
+```yaml
+homeassistant:
+  packages: !include_dir_named packages
+```
+
+Do not create a second `homeassistant:` block.
+
+## 3. Create the packages directory
+
+Create this directory if it does not already exist:
+
+```text
+/config/packages/
+```
+
+## 4. Install the Redline package
+
+Create this file:
+
+```text
+/config/packages/wtg_gpu_redline.yaml
+```
+
+Copy the contents of:
+
+```text
+packages/wtg_gpu_redline.yaml
+```
+
+into that file.
+
+## 5. Check Home Assistant configuration
+
+Open:
+
+```text
+Developer Tools -> YAML
+```
+
+Click:
+
+```text
+Check configuration
+```
+
+Do not restart unless the configuration check passes.
+
+## 6. Restart Home Assistant
+
+After the configuration check passes, restart Home Assistant:
+
+```text
+Developer Tools -> YAML -> Restart
+```
+
+## 7. Confirm Redline entities exist
+
+After restart, open:
+
+```text
+Developer Tools -> States
+```
+
+Search for:
+
+```text
+redline
+```
+
+You should see:
+
+```text
+binary_sensor.wtg_bench_redline_sus
+sensor.wtg_bench_redline_score
+sensor.wtg_bench_redline_state
+sensor.wtg_bench_redline_summary
+```
+
+## 8. Add the dashboard cards
+
+Open the dashboard where you want the gauge.
+
+Select:
+
+```text
+Edit dashboard -> Add card -> Manual
+```
+
+Paste this gauge card:
+
+```yaml
+type: gauge
+entity: sensor.wtg_bench_redline_score
+name: WTG GPU Redline
+min: 0
+max: 100
+needle: true
+severity:
+  green: 0
+  yellow: 20
+  red: 85
+```
+
+Then add another manual card:
+
+```yaml
+type: entities
+title: WTG GPU Redline
+entities:
+  - entity: sensor.wtg_bench_redline_state
+    name: State
+  - entity: sensor.wtg_bench_redline_score
+    name: Redline Score
+  - entity: binary_sensor.wtg_bench_redline_sus
+    name: SUS Override
+  - entity: sensor.wtg_bench_redline_summary
+    name: Summary
+  - entity: sensor.wtg_bench_gpu_0_gpu_0_gpu_utilization
+    name: GPU
+  - entity: sensor.wtg_bench_gpu_0_gpu_0_memory_controller_utilization
+    name: Memory Controller
+  - entity: sensor.wtg_bench_gpu_0_gpu_0_power
+    name: Power
+  - entity: sensor.wtg_bench_gpu_0_gpu_0_power_limit
+    name: Power Limit
+  - entity: sensor.wtg_bench_gpu_0_gpu_0_temperature
+    name: Temperature
+  - entity: sensor.wtg_bench_gpu_0_gpu_0_performance_state
+    name: Perf State
+```
+
+## 9. Expected idle result
+
+At idle, the bench should normally show:
+
+```text
+State: IDLE
+SUS Override: off
+Redline Score: low
+```
+
+Under load, the state should move toward:
+
+```text
+LOAD -> MAX
+```
+
+If the Home Assistant-side template sees a telemetry mismatch, it should show:
+
+```text
+SUS
+```
+
+## Notes
+
+Redline uses WTG-discovered Home Assistant entities. It does not create MQTT sensors directly.
+
+WTG is the telemetry source. Redline is a dashboard interpretation layer.
