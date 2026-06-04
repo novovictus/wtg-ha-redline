@@ -4,6 +4,26 @@ Home Assistant dashboard and template examples for WTG MQTT telemetry.
 
 WTG reports the GPU telemetry. Redline visualizes it.
 
+## Start here
+
+If WTG is already talking to Home Assistant and Home Assistant has already created the WTG GPU entities, start with the install guide:
+
+- [Install Redline after WTG discovery is working](docs/install-redline-from-wtg-discovery.md)
+
+The current Redline template package is here:
+
+- [packages/wtg_gpu_redline.yaml](packages/wtg_gpu_redline.yaml)
+
+The current basic dashboard card example is here:
+
+- [dashboards/redline-basic.yaml](dashboards/redline-basic.yaml)
+
+Expected user flow:
+
+```text
+WTG MQTT discovery working -> install Redline template package -> add Redline dashboard cards
+```
+
 ## What this is
 
 WTG HA Redline is an example layer for turning WTG MQTT telemetry into Home Assistant dashboard cards. The first target is an arcade-style GPU Redline display with these Home Assistant-side states:
@@ -133,7 +153,7 @@ Telemetry mismatch override. Example: low GPU utilization, low power, low VRAM u
 
 `SUS` should be treated as an override, not as a higher load state.
 
-## Planned repo layout
+## Repo layout
 
 ```text
 wtg-ha-redline/
@@ -143,16 +163,12 @@ wtg-ha-redline/
     wtg_gpu_redline.yaml
   dashboards/
     redline-basic.yaml
-    redline-mushroom.yaml
-    redline-button-card.yaml
   examples/
     mqtt-payload-example.json
-    bench1-example.yaml
   docs/
+    install-redline-from-wtg-discovery.md
     telemetry-boundary.md
     state-model.md
-    thresholds.md
-    screenshots.md
   assets/
     screenshots/
     mockups/
