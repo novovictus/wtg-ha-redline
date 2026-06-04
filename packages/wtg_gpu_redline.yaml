@@ -1,0 +1,9 @@
+# WTG GPU Redline package placeholder
+#
+# This package will contain the first Home Assistant template/MQTT example
+# for the arcade-style Redline dashboard.
+#
+# Target display states:
+# IDLE -> LOAD -> MAX -> LIMIT -> SUS
+#
+# WTG publishes raw telemetry. Home Assistant derives display states.

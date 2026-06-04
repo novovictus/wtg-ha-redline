@@ -1,0 +1,14 @@
+{
+  "host": "WTG-BENCH",
+  "gpu_index": 0,
+  "gpu_name": "NVIDIA GeForce RTX 3060 Ti",
+  "driver_version": "581.95",
+  "util_gpu_pct": 89,
+  "util_mem_controller_pct": 95,
+  "vram_used_mib": 5588,
+  "vram_total_mib": 8192,
+  "power_w": 199.4,
+  "power_limit_w": 200.0,
+  "temp_c": 54,
+  "perf_state": "P2"
+}
