@@ -2,22 +2,13 @@
 #
 # Minimal first-pass package for WTG MQTT telemetry.
 #
-# Assumed WTG MQTT state topic:
-#   wtg/bench1/gpu0/state
+# Verified against WTG main branch MQTT payload schema.
 #
-# Assumed WTG payload fields:
-#   host
-#   gpu_index
-#   gpu_name
-#   driver_version
-#   util_gpu_pct
-#   util_mem_controller_pct
-#   vram_used_mib
-#   vram_total_mib
-#   power_w
-#   power_limit_w
-#   temp_c
-#   perf_state
+# Default WTG MQTT state topic shape:
+#   wtg/<node_id>/gpu<index>/state
+#
+# This example uses:
+#   wtg/bench1/gpu0/state
 #
 # WTG publishes raw telemetry. Home Assistant derives display states.
 # Display sequence:
@@ -27,6 +18,85 @@
 
 mqtt:
   sensor:
+    - name: "WTG Bench Version"
+      unique_id: wtg_bench1_gpu0_wtg_version
+      state_topic: "wtg/bench1/gpu0/state"
+      value_template: "{{ value_json.wtg_version }}"
+
+    - name: "WTG Bench Payload Schema"
+      unique_id: wtg_bench1_gpu0_payload_schema
+      state_topic: "wtg/bench1/gpu0/state"
+      value_template: "{{ value_json.payload_schema }}"
+
+    - name: "WTG Bench Tick Sequence"
+      unique_id: wtg_bench1_gpu0_tick_seq
+      state_topic: "wtg/bench1/gpu0/state"
+      value_template: "{{ value_json.tick_seq }}"
+      state_class: measurement
+
+    - name: "WTG Bench Tick Timestamp"
+      unique_id: wtg_bench1_gpu0_tick_ts
+      state_topic: "wtg/bench1/gpu0/state"
+      value_template: "{{ value_json.tick_ts }}"
+
+    - name: "WTG Bench Host"
+      unique_id: wtg_bench1_gpu0_host
+      state_topic: "wtg/bench1/gpu0/state"
+      value_template: "{{ value_json.host }}"
+
+    - name: "WTG Bench Node ID"
+      unique_id: wtg_bench1_gpu0_node_id
+      state_topic: "wtg/bench1/gpu0/state"
+      value_template: "{{ value_json.node_id }}"
+
+    - name: "WTG Bench GPU Index"
+      unique_id: wtg_bench1_gpu0_gpu_index
+      state_topic: "wtg/bench1/gpu0/state"
+      value_template: "{{ value_json.gpu_index }}"
+
+    - name: "WTG Bench GPU Name"
+      unique_id: wtg_bench1_gpu0_gpu_name
+      state_topic: "wtg/bench1/gpu0/state"
+      value_template: "{{ value_json.gpu_name }}"
+
+    - name: "WTG Bench GPU UUID"
+      unique_id: wtg_bench1_gpu0_gpu_uuid
+      state_topic: "wtg/bench1/gpu0/state"
+      value_template: "{{ value_json.gpu_uuid }}"
+
+    - name: "WTG Bench Driver Version"
+      unique_id: wtg_bench1_gpu0_driver_version
+      state_topic: "wtg/bench1/gpu0/state"
+      value_template: "{{ value_json.driver_version }}"
+
+    - name: "WTG Bench CUDA Driver Version"
+      unique_id: wtg_bench1_gpu0_cuda_driver_version
+      state_topic: "wtg/bench1/gpu0/state"
+      value_template: "{{ value_json.cuda_driver_version }}"
+
+    - name: "WTG Bench Compute Mode"
+      unique_id: wtg_bench1_gpu0_compute_mode
+      state_topic: "wtg/bench1/gpu0/state"
+      value_template: "{{ value_json.compute_mode }}"
+
+    - name: "WTG Bench Perf State"
+      unique_id: wtg_bench1_gpu0_perf_state
+      state_topic: "wtg/bench1/gpu0/state"
+      value_template: "{{ value_json.perf_state }}"
+
+    - name: "WTG Bench PCI Bus ID"
+      unique_id: wtg_bench1_gpu0_pci_bus_id
+      state_topic: "wtg/bench1/gpu0/state"
+      value_template: "{{ value_json.pci_bus_id }}"
+
+    - name: "WTG Bench Temperature"
+      unique_id: wtg_bench1_gpu0_temp_c
+      state_topic: "wtg/bench1/gpu0/state"
+      value_template: "{{ value_json.temp_c }}"
+      unit_of_measurement: "°C"
+      device_class: temperature
+      state_class: measurement
+
     - name: "WTG Bench GPU Utilization"
       unique_id: wtg_bench1_gpu0_util_gpu_pct
       state_topic: "wtg/bench1/gpu0/state"
@@ -70,29 +140,6 @@ mqtt:
       unit_of_measurement: "W"
       device_class: power
       state_class: measurement
-
-    - name: "WTG Bench Temperature"
-      unique_id: wtg_bench1_gpu0_temp_c
-      state_topic: "wtg/bench1/gpu0/state"
-      value_template: "{{ value_json.temp_c }}"
-      unit_of_measurement: "°C"
-      device_class: temperature
-      state_class: measurement
-
-    - name: "WTG Bench Perf State"
-      unique_id: wtg_bench1_gpu0_perf_state
-      state_topic: "wtg/bench1/gpu0/state"
-      value_template: "{{ value_json.perf_state }}"
-
-    - name: "WTG Bench GPU Name"
-      unique_id: wtg_bench1_gpu0_gpu_name
-      state_topic: "wtg/bench1/gpu0/state"
-      value_template: "{{ value_json.gpu_name }}"
-
-    - name: "WTG Bench Driver Version"
-      unique_id: wtg_bench1_gpu0_driver_version
-      state_topic: "wtg/bench1/gpu0/state"
-      value_template: "{{ value_json.driver_version }}"
 
 template:
   - binary_sensor:
