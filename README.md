@@ -49,7 +49,7 @@ Once the next WTG release is cut, this README can be updated to point users at t
 
 ## Expected MQTT telemetry shape
 
-The current examples assume that WTG publishes one JSON state payload per GPU to a topic like:
+WTG publishes one JSON state payload per GPU to a topic like:
 
 ```text
 wtg/<node_id>/gpu<index>/state
@@ -61,22 +61,31 @@ Example:
 wtg/bench1/gpu0/state
 ```
 
-A representative payload may look like this:
+The current Redline examples are aligned with the WTG `main` MQTT state payload schema:
 
 ```json
 {
+  "wtg_version": "0.2.4",
+  "payload_schema": 1,
+  "tick_seq": 42,
+  "tick_ts": "2026-06-04T12:34:56.789Z",
   "host": "WTG-BENCH",
+  "node_id": "bench1",
   "gpu_index": 0,
   "gpu_name": "NVIDIA GeForce RTX 3060 Ti",
+  "gpu_uuid": "GPU-example-uuid",
   "driver_version": "581.95",
+  "cuda_driver_version": "13.0",
+  "compute_mode": "Default",
+  "perf_state": "P2",
+  "pci_bus_id": "00000000:01:00.0",
+  "temp_c": 54,
   "util_gpu_pct": 89,
   "util_mem_controller_pct": 95,
   "vram_used_mib": 5588,
   "vram_total_mib": 8192,
   "power_w": 199.4,
-  "power_limit_w": 200.0,
-  "temp_c": 54,
-  "perf_state": "P2"
+  "power_limit_w": 200.0
 }
 ```
 
