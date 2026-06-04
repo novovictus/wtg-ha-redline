@@ -1,160 +1,43 @@
 # WTG GPU Redline Home Assistant package
 #
-# Minimal first-pass package for WTG MQTT telemetry.
+# Template-only first-pass Redline package for WTG Home Assistant discovery.
 #
-# Verified against WTG main branch MQTT payload schema.
+# WTG already publishes MQTT discovery entities. This package does not create
+# duplicate MQTT sensors. It consumes the entities that WTG discovery already
+# created in Home Assistant and derives Redline display entities from them.
 #
-# Default WTG MQTT state topic shape:
-#   wtg/<node_id>/gpu<index>/state
+# Verified against current bench discovery entity IDs:
+#   sensor.wtg_bench_gpu_0_gpu_0_gpu_utilization
+#   sensor.wtg_bench_gpu_0_gpu_0_memory_controller_utilization
+#   sensor.wtg_bench_gpu_0_gpu_0_power
+#   sensor.wtg_bench_gpu_0_gpu_0_power_limit
+#   sensor.wtg_bench_gpu_0_gpu_0_temperature
+#   sensor.wtg_bench_gpu_0_gpu_0_vram_used
+#   sensor.wtg_bench_gpu_0_gpu_0_vram_total
+#   sensor.wtg_bench_gpu_0_gpu_0_performance_state
 #
-# This example uses:
-#   wtg/bench1/gpu0/state
-#
-# WTG publishes raw telemetry. Home Assistant derives display states.
 # Display sequence:
 #   IDLE -> LOAD -> MAX -> LIMIT -> SUS
 #
 # SUS is an override, not a higher load state.
-
-mqtt:
-  sensor:
-    - name: "WTG Bench Version"
-      unique_id: wtg_bench1_gpu0_wtg_version
-      state_topic: "wtg/bench1/gpu0/state"
-      value_template: "{{ value_json.wtg_version }}"
-
-    - name: "WTG Bench Payload Schema"
-      unique_id: wtg_bench1_gpu0_payload_schema
-      state_topic: "wtg/bench1/gpu0/state"
-      value_template: "{{ value_json.payload_schema }}"
-
-    - name: "WTG Bench Tick Sequence"
-      unique_id: wtg_bench1_gpu0_tick_seq
-      state_topic: "wtg/bench1/gpu0/state"
-      value_template: "{{ value_json.tick_seq }}"
-      state_class: measurement
-
-    - name: "WTG Bench Tick Timestamp"
-      unique_id: wtg_bench1_gpu0_tick_ts
-      state_topic: "wtg/bench1/gpu0/state"
-      value_template: "{{ value_json.tick_ts }}"
-
-    - name: "WTG Bench Host"
-      unique_id: wtg_bench1_gpu0_host
-      state_topic: "wtg/bench1/gpu0/state"
-      value_template: "{{ value_json.host }}"
-
-    - name: "WTG Bench Node ID"
-      unique_id: wtg_bench1_gpu0_node_id
-      state_topic: "wtg/bench1/gpu0/state"
-      value_template: "{{ value_json.node_id }}"
-
-    - name: "WTG Bench GPU Index"
-      unique_id: wtg_bench1_gpu0_gpu_index
-      state_topic: "wtg/bench1/gpu0/state"
-      value_template: "{{ value_json.gpu_index }}"
-
-    - name: "WTG Bench GPU Name"
-      unique_id: wtg_bench1_gpu0_gpu_name
-      state_topic: "wtg/bench1/gpu0/state"
-      value_template: "{{ value_json.gpu_name }}"
-
-    - name: "WTG Bench GPU UUID"
-      unique_id: wtg_bench1_gpu0_gpu_uuid
-      state_topic: "wtg/bench1/gpu0/state"
-      value_template: "{{ value_json.gpu_uuid }}"
-
-    - name: "WTG Bench Driver Version"
-      unique_id: wtg_bench1_gpu0_driver_version
-      state_topic: "wtg/bench1/gpu0/state"
-      value_template: "{{ value_json.driver_version }}"
-
-    - name: "WTG Bench CUDA Driver Version"
-      unique_id: wtg_bench1_gpu0_cuda_driver_version
-      state_topic: "wtg/bench1/gpu0/state"
-      value_template: "{{ value_json.cuda_driver_version }}"
-
-    - name: "WTG Bench Compute Mode"
-      unique_id: wtg_bench1_gpu0_compute_mode
-      state_topic: "wtg/bench1/gpu0/state"
-      value_template: "{{ value_json.compute_mode }}"
-
-    - name: "WTG Bench Perf State"
-      unique_id: wtg_bench1_gpu0_perf_state
-      state_topic: "wtg/bench1/gpu0/state"
-      value_template: "{{ value_json.perf_state }}"
-
-    - name: "WTG Bench PCI Bus ID"
-      unique_id: wtg_bench1_gpu0_pci_bus_id
-      state_topic: "wtg/bench1/gpu0/state"
-      value_template: "{{ value_json.pci_bus_id }}"
-
-    - name: "WTG Bench Temperature"
-      unique_id: wtg_bench1_gpu0_temp_c
-      state_topic: "wtg/bench1/gpu0/state"
-      value_template: "{{ value_json.temp_c }}"
-      unit_of_measurement: "°C"
-      device_class: temperature
-      state_class: measurement
-
-    - name: "WTG Bench GPU Utilization"
-      unique_id: wtg_bench1_gpu0_util_gpu_pct
-      state_topic: "wtg/bench1/gpu0/state"
-      value_template: "{{ value_json.util_gpu_pct }}"
-      unit_of_measurement: "%"
-      state_class: measurement
-
-    - name: "WTG Bench Memory Controller"
-      unique_id: wtg_bench1_gpu0_util_mem_controller_pct
-      state_topic: "wtg/bench1/gpu0/state"
-      value_template: "{{ value_json.util_mem_controller_pct }}"
-      unit_of_measurement: "%"
-      state_class: measurement
-
-    - name: "WTG Bench VRAM Used"
-      unique_id: wtg_bench1_gpu0_vram_used_mib
-      state_topic: "wtg/bench1/gpu0/state"
-      value_template: "{{ value_json.vram_used_mib }}"
-      unit_of_measurement: "MiB"
-      state_class: measurement
-
-    - name: "WTG Bench VRAM Total"
-      unique_id: wtg_bench1_gpu0_vram_total_mib
-      state_topic: "wtg/bench1/gpu0/state"
-      value_template: "{{ value_json.vram_total_mib }}"
-      unit_of_measurement: "MiB"
-      state_class: measurement
-
-    - name: "WTG Bench Power"
-      unique_id: wtg_bench1_gpu0_power_w
-      state_topic: "wtg/bench1/gpu0/state"
-      value_template: "{{ value_json.power_w }}"
-      unit_of_measurement: "W"
-      device_class: power
-      state_class: measurement
-
-    - name: "WTG Bench Power Limit"
-      unique_id: wtg_bench1_gpu0_power_limit_w
-      state_topic: "wtg/bench1/gpu0/state"
-      value_template: "{{ value_json.power_limit_w }}"
-      unit_of_measurement: "W"
-      device_class: power
-      state_class: measurement
+#
+# Note: This package uses Fahrenheit temperature thresholds because the current
+# Home Assistant instance displays WTG temperature as °F.
 
 template:
   - binary_sensor:
-      - name: "WTG Bench SUS"
-        unique_id: wtg_bench1_gpu0_sus
+      - name: "WTG Bench Redline SUS"
+        unique_id: wtg_bench1_gpu0_redline_sus
         state: >
-          {% set gpu = states('sensor.wtg_bench_gpu_utilization') | float(999) %}
-          {% set mem = states('sensor.wtg_bench_memory_controller') | float(0) %}
-          {% set power = states('sensor.wtg_bench_power') | float(999) %}
-          {% set vram_used = states('sensor.wtg_bench_vram_used') | float(999999) %}
-          {% set vram_total = states('sensor.wtg_bench_vram_total') | float(1) %}
+          {% set gpu = states('sensor.wtg_bench_gpu_0_gpu_0_gpu_utilization') | float(999) %}
+          {% set mem = states('sensor.wtg_bench_gpu_0_gpu_0_memory_controller_utilization') | float(0) %}
+          {% set power = states('sensor.wtg_bench_gpu_0_gpu_0_power') | float(999) %}
+          {% set vram_used = states('sensor.wtg_bench_gpu_0_gpu_0_vram_used') | float(999999) %}
+          {% set vram_total = states('sensor.wtg_bench_gpu_0_gpu_0_vram_total') | float(1) %}
           {% set vram_pct = (vram_used / vram_total * 100) if vram_total > 0 else 100 %}
           {{ gpu <= 3 and mem >= 95 and power <= 35 and vram_pct <= 10 }}
         icon: >
-          {% if is_state('binary_sensor.wtg_bench_sus', 'on') %}
+          {% if is_state('binary_sensor.wtg_bench_redline_sus', 'on') %}
             mdi:alert-circle
           {% else %}
             mdi:check-circle
@@ -166,17 +49,17 @@ template:
         unit_of_measurement: "%"
         state_class: measurement
         state: >
-          {% set gpu = states('sensor.wtg_bench_gpu_utilization') | float(0) %}
-          {% set mem = states('sensor.wtg_bench_memory_controller') | float(0) %}
-          {% set power = states('sensor.wtg_bench_power') | float(0) %}
-          {% set limit = states('sensor.wtg_bench_power_limit') | float(0) %}
-          {% set temp = states('sensor.wtg_bench_temperature') | float(0) %}
+          {% set gpu = states('sensor.wtg_bench_gpu_0_gpu_0_gpu_utilization') | float(0) %}
+          {% set mem = states('sensor.wtg_bench_gpu_0_gpu_0_memory_controller_utilization') | float(0) %}
+          {% set power = states('sensor.wtg_bench_gpu_0_gpu_0_power') | float(0) %}
+          {% set limit = states('sensor.wtg_bench_gpu_0_gpu_0_power_limit') | float(0) %}
+          {% set temp_f = states('sensor.wtg_bench_gpu_0_gpu_0_temperature') | float(0) %}
           {% set power_pct = (power / limit * 100) if limit > 0 else 0 %}
           {% set activity = [gpu, mem] | max %}
           {% set score = (activity * 0.55) + (power_pct * 0.35) %}
-          {% if temp >= 83 %}
+          {% if temp_f >= 181 %}
             {% set score = score + 15 %}
-          {% elif temp >= 75 %}
+          {% elif temp_f >= 167 %}
             {% set score = score + 8 %}
           {% endif %}
           {{ [0, [score, 100] | min] | max | round(0) }}
@@ -185,13 +68,13 @@ template:
         unique_id: wtg_bench1_gpu0_redline_state
         state: >
           {% set score = states('sensor.wtg_bench_redline_score') | float(0) %}
-          {% set power = states('sensor.wtg_bench_power') | float(0) %}
-          {% set limit = states('sensor.wtg_bench_power_limit') | float(0) %}
-          {% set temp = states('sensor.wtg_bench_temperature') | float(0) %}
+          {% set power = states('sensor.wtg_bench_gpu_0_gpu_0_power') | float(0) %}
+          {% set limit = states('sensor.wtg_bench_gpu_0_gpu_0_power_limit') | float(0) %}
+          {% set temp_f = states('sensor.wtg_bench_gpu_0_gpu_0_temperature') | float(0) %}
           {% set power_ratio = (power / limit) if limit > 0 else 0 %}
-          {% if is_state('binary_sensor.wtg_bench_sus', 'on') %}
+          {% if is_state('binary_sensor.wtg_bench_redline_sus', 'on') %}
             SUS
-          {% elif power_ratio >= 0.97 or temp >= 83 %}
+          {% elif power_ratio >= 0.97 or temp_f >= 181 %}
             LIMIT
           {% elif score >= 75 %}
             MAX
@@ -214,3 +97,8 @@ template:
           {% else %}
             mdi:gauge
           {% endif %}
+
+      - name: "WTG Bench Redline Summary"
+        unique_id: wtg_bench1_gpu0_redline_summary
+        state: >
+          {{ states('sensor.wtg_bench_redline_state') }} · GPU {{ states('sensor.wtg_bench_gpu_0_gpu_0_gpu_utilization') }}% · MEM {{ states('sensor.wtg_bench_gpu_0_gpu_0_memory_controller_utilization') }}% · PWR {{ states('sensor.wtg_bench_gpu_0_gpu_0_power') }} W
