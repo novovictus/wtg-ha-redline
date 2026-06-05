@@ -2,15 +2,22 @@
 #
 # Stock Home Assistant cards only. No custom cards required.
 #
-# Requires packages/wtg_gpu_redline.yaml or equivalent Redline entities.
+# Requires packages/wtg_gpu_redline.yaml or equivalent host-scoped Redline entities.
 #
-# This dashboard example consumes the Redline output entities created by the
-# package. It does not reference WTG source telemetry entities directly and
-# does not require hostname edits.
+# USER EDIT REQUIRED:
+# Replace YOUR_HOSTNAME with the advertised hostname used when installing the
+# Redline package for this host.
+#
+# Example:
+#   sensor.wtg_YOUR_HOSTNAME_redline_score
+#
+# might become:
+#   sensor.wtg_bench_redline_score
+#   sensor.wtg_rog_redline_score
 
 - type: gauge
-  entity: sensor.wtg_redline_score
-  name: WTG GPU Redline
+  entity: sensor.wtg_YOUR_HOSTNAME_redline_score
+  name: WTG YOUR_HOSTNAME GPU Redline
   min: 0
   max: 100
   needle: true
@@ -20,13 +27,13 @@
     red: 85
 
 - type: entities
-  title: WTG GPU Redline
+  title: WTG YOUR_HOSTNAME GPU Redline
   entities:
-    - entity: sensor.wtg_redline_state
+    - entity: sensor.wtg_YOUR_HOSTNAME_redline_state
       name: State
-    - entity: sensor.wtg_redline_score
+    - entity: sensor.wtg_YOUR_HOSTNAME_redline_score
       name: Redline Score
-    - entity: binary_sensor.wtg_redline_sus
+    - entity: binary_sensor.wtg_YOUR_HOSTNAME_redline_sus
       name: SUS Override
-    - entity: sensor.wtg_redline_summary
+    - entity: sensor.wtg_YOUR_HOSTNAME_redline_summary
       name: Summary
