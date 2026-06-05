@@ -1,0 +1,15 @@
+# WTG GPU Redline gauge card
+#
+# Paste this file into one Home Assistant Manual card.
+# Replace YOUR_HOSTNAME with the advertised hostname for this Redline instance.
+
+type: gauge
+entity: sensor.wtg_YOUR_HOSTNAME_redline_score
+name: WTG YOUR_HOSTNAME GPU Redline
+min: 0
+max: 100
+needle: true
+severity:
+  green: 0
+  yellow: 20
+  red: 85
