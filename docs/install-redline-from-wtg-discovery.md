@@ -174,21 +174,68 @@ Open:
 /config/configuration.yaml
 ```
 
-If there is no `homeassistant:` block, add this:
+Packages are enabled by adding this block exactly as shown:
 
 ```yaml
 homeassistant:
   packages: !include_dir_named packages
 ```
 
-If a `homeassistant:` block already exists, add only the `packages:` line under the existing block:
+This is not a placeholder and does not need editing. It tells Home Assistant to load every YAML file inside:
+
+```text
+/config/packages/
+```
+
+The word `packages` at the end is the folder name, not your Redline package name.
+
+If there is no `homeassistant:` block in `configuration.yaml`, add the full block:
 
 ```yaml
 homeassistant:
+  packages: !include_dir_named packages
+```
+
+If a `homeassistant:` block already exists, add only this indented line under the existing `homeassistant:` block:
+
+```yaml
   packages: !include_dir_named packages
 ```
 
 Do not create a second `homeassistant:` block.
+
+Example default Home Assistant configuration before:
+
+```yaml
+# Loads default set of integrations. Do not remove.
+default_config:
+
+# Load frontend themes from the themes folder
+frontend:
+  themes: !include_dir_merge_named themes
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+```
+
+Example after adding packages:
+
+```yaml
+# Loads default set of integrations. Do not remove.
+default_config:
+
+homeassistant:
+  packages: !include_dir_named packages
+
+# Load frontend themes from the themes folder
+frontend:
+  themes: !include_dir_merge_named themes
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+```
 
 ## 5. Check Home Assistant configuration
 
@@ -246,7 +293,13 @@ Open the dashboard where you want the gauge.
 Select:
 
 ```text
-Edit dashboard -> Add card -> Manual
+Edit dashboard -> Add card
+```
+
+Home Assistant shows a list of card types. Scroll all the way to the bottom of the list and select:
+
+```text
+Manual
 ```
 
 Paste this gauge card:
