@@ -16,6 +16,18 @@
 # might become:
 #   sensor.wtg_myhostname_gpu_0_gpu_0_power
 #
+# This package is instance-scoped by hostname. To monitor multiple WTG nodes,
+# install one copy of this package per host, using a different filename and
+# replacing YOUR_HOSTNAME with each host's advertised hostname.
+#
+# Example files:
+#   /config/packages/wtg_gpu_redline_bench.yaml
+#   /config/packages/wtg_gpu_redline_rog.yaml
+#
+# Example resulting Redline entities:
+#   sensor.wtg_bench_redline_score
+#   sensor.wtg_rog_redline_score
+#
 # Display sequence:
 #   IDLE -> LOAD -> MAX -> LIMIT -> SUS
 #
@@ -29,7 +41,7 @@
 
 template:
   - binary_sensor:
-      - name: "WTG Redline SUS"
+      - name: "WTG YOUR_HOSTNAME Redline SUS"
         unique_id: wtg_YOUR_HOSTNAME_gpu0_redline_sus
         state: >
           {% set gpu = states('sensor.wtg_YOUR_HOSTNAME_gpu_0_gpu_0_gpu_utilization') | float(999) %}
@@ -40,14 +52,14 @@ template:
           {% set vram_pct = (vram_used / vram_total * 100) if vram_total > 0 else 100 %}
           {{ gpu <= 3 and mem >= 95 and power <= 35 and vram_pct <= 10 }}
         icon: >
-          {% if is_state('binary_sensor.wtg_redline_sus', 'on') %}
+          {% if is_state('binary_sensor.wtg_YOUR_HOSTNAME_redline_sus', 'on') %}
             mdi:alert-circle
           {% else %}
             mdi:check-circle
           {% endif %}
 
   - sensor:
-      - name: "WTG Redline Score"
+      - name: "WTG YOUR_HOSTNAME Redline Score"
         unique_id: wtg_YOUR_HOSTNAME_gpu0_redline_score
         unit_of_measurement: "%"
         state_class: measurement
@@ -67,12 +79,12 @@ template:
           {% endif %}
           {{ [0, [score, 100] | min] | max | round(0) }}
 
-      - name: "WTG Redline State"
+      - name: "WTG YOUR_HOSTNAME Redline State"
         unique_id: wtg_YOUR_HOSTNAME_gpu0_redline_state
         state: >
-          {% set score = states('sensor.wtg_redline_score') | float(0) %}
+          {% set score = states('sensor.wtg_YOUR_HOSTNAME_redline_score') | float(0) %}
           {% set temp_f = states('sensor.wtg_YOUR_HOSTNAME_gpu_0_gpu_0_temperature') | float(0) %}
-          {% if is_state('binary_sensor.wtg_redline_sus', 'on') %}
+          {% if is_state('binary_sensor.wtg_YOUR_HOSTNAME_redline_sus', 'on') %}
             SUS
           {% elif temp_f >= 181 %}
             LIMIT
@@ -84,21 +96,21 @@ template:
             IDLE
           {% endif %}
         icon: >
-          {% if is_state('sensor.wtg_redline_state', 'IDLE') %}
+          {% if is_state('sensor.wtg_YOUR_HOSTNAME_redline_state', 'IDLE') %}
             mdi:gauge-empty
-          {% elif is_state('sensor.wtg_redline_state', 'LOAD') %}
+          {% elif is_state('sensor.wtg_YOUR_HOSTNAME_redline_state', 'LOAD') %}
             mdi:gauge-low
-          {% elif is_state('sensor.wtg_redline_state', 'MAX') %}
+          {% elif is_state('sensor.wtg_YOUR_HOSTNAME_redline_state', 'MAX') %}
             mdi:gauge-full
-          {% elif is_state('sensor.wtg_redline_state', 'LIMIT') %}
+          {% elif is_state('sensor.wtg_YOUR_HOSTNAME_redline_state', 'LIMIT') %}
             mdi:thermometer-alert
-          {% elif is_state('sensor.wtg_redline_state', 'SUS') %}
+          {% elif is_state('sensor.wtg_YOUR_HOSTNAME_redline_state', 'SUS') %}
             mdi:alert-circle
           {% else %}
             mdi:gauge
           {% endif %}
 
-      - name: "WTG Redline Summary"
+      - name: "WTG YOUR_HOSTNAME Redline Summary"
         unique_id: wtg_YOUR_HOSTNAME_gpu0_redline_summary
         state: >
-          {{ states('sensor.wtg_redline_state') }} · GPU {{ states('sensor.wtg_YOUR_HOSTNAME_gpu_0_gpu_0_gpu_utilization') }}% · MEM {{ states('sensor.wtg_YOUR_HOSTNAME_gpu_0_gpu_0_memory_controller_utilization') }}% · PWR {{ states('sensor.wtg_YOUR_HOSTNAME_gpu_0_gpu_0_power') }} W
+          {{ states('sensor.wtg_YOUR_HOSTNAME_redline_state') }} · GPU {{ states('sensor.wtg_YOUR_HOSTNAME_gpu_0_gpu_0_gpu_utilization') }}% · MEM {{ states('sensor.wtg_YOUR_HOSTNAME_gpu_0_gpu_0_memory_controller_utilization') }}% · PWR {{ states('sensor.wtg_YOUR_HOSTNAME_gpu_0_gpu_0_power') }} W
