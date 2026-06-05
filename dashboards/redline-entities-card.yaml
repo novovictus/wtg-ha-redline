@@ -1,0 +1,16 @@
+# WTG GPU Redline entities card
+#
+# Paste this file into one Home Assistant Manual card.
+# Replace YOUR_HOSTNAME with the advertised hostname for this Redline instance.
+
+type: entities
+title: WTG YOUR_HOSTNAME GPU Redline
+entities:
+  - entity: sensor.wtg_YOUR_HOSTNAME_redline_state
+    name: State
+  - entity: sensor.wtg_YOUR_HOSTNAME_redline_score
+    name: Redline Score
+  - entity: binary_sensor.wtg_YOUR_HOSTNAME_redline_sus
+    name: SUS Override
+  - entity: sensor.wtg_YOUR_HOSTNAME_redline_summary
+    name: Summary
