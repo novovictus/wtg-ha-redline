@@ -74,7 +74,7 @@ Example for discovered entities beginning with `sensor.wtg_bench_`:
 curl -fsSL https://raw.githubusercontent.com/novovictus/wtg-ha-redline/main/packages/wtg_gpu_redline.yaml | sed 's/YOUR_HOSTNAME/bench/g' > /config/packages/wtg_bench_redline.yaml
 ```
 
-For a second WTG host, install a second package file with that host's name:
+Example for discovered entities beginning with `sensor.wtg_rog_`:
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/novovictus/wtg-ha-redline/main/packages/wtg_gpu_redline.yaml | sed 's/YOUR_HOSTNAME/rog/g' > /config/packages/wtg_rog_redline.yaml
@@ -87,6 +87,18 @@ grep YOUR_HOSTNAME /config/packages/wtg_<hostname>_redline.yaml
 ```
 
 No output means the placeholder is gone.
+
+The dashboard card template is also host-scoped. Replace `YOUR_HOSTNAME` before pasting it into a Manual dashboard card:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/novovictus/wtg-ha-redline/main/dashboards/redline-basic.yaml | sed 's/YOUR_HOSTNAME/<hostname>/g'
+```
+
+Example for `rog`:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/novovictus/wtg-ha-redline/main/dashboards/redline-basic.yaml | sed 's/YOUR_HOSTNAME/rog/g'
+```
 
 Then continue with the install guide to enable packages, check configuration, restart Home Assistant, and add the dashboard cards.
 
