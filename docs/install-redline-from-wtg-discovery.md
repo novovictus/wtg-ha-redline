@@ -24,6 +24,8 @@ A basic dashboard card example that uses those Redline entities.
 
 The package file is a starting template. Copy it into your Home Assistant `/config/packages/` directory, then edit the source entity IDs if your WTG advertised hostname or GPU index is different from the example.
 
+The dashboard card example uses only the Redline entities created by the package, so it should not require hostname edits once the package is working.
+
 ## 1. Confirm your WTG entity IDs
 
 In Home Assistant, open:
@@ -278,13 +280,13 @@ redline
 You should see:
 
 ```text
-binary_sensor.wtg_bench_redline_sus
-sensor.wtg_bench_redline_score
-sensor.wtg_bench_redline_state
-sensor.wtg_bench_redline_summary
+binary_sensor.wtg_redline_sus
+sensor.wtg_redline_score
+sensor.wtg_redline_state
+sensor.wtg_redline_summary
 ```
 
-If you changed the Redline entity names or unique IDs in the package, your entity IDs may differ.
+If those four entities exist and show sensible values, Redline installation succeeded.
 
 ## 8. Add the dashboard cards
 
@@ -306,7 +308,7 @@ Paste this gauge card:
 
 ```yaml
 type: gauge
-entity: sensor.wtg_bench_redline_score
+entity: sensor.wtg_redline_score
 name: WTG GPU Redline
 min: 0
 max: 100
@@ -323,29 +325,17 @@ Then add another manual card:
 type: entities
 title: WTG GPU Redline
 entities:
-  - entity: sensor.wtg_bench_redline_state
+  - entity: sensor.wtg_redline_state
     name: State
-  - entity: sensor.wtg_bench_redline_score
+  - entity: sensor.wtg_redline_score
     name: Redline Score
-  - entity: binary_sensor.wtg_bench_redline_sus
+  - entity: binary_sensor.wtg_redline_sus
     name: SUS Override
-  - entity: sensor.wtg_bench_redline_summary
+  - entity: sensor.wtg_redline_summary
     name: Summary
-  - entity: sensor.wtg_bench_gpu_0_gpu_0_gpu_utilization
-    name: GPU
-  - entity: sensor.wtg_bench_gpu_0_gpu_0_memory_controller_utilization
-    name: Memory Controller
-  - entity: sensor.wtg_bench_gpu_0_gpu_0_power
-    name: Power
-  - entity: sensor.wtg_bench_gpu_0_gpu_0_power_limit
-    name: Power Limit
-  - entity: sensor.wtg_bench_gpu_0_gpu_0_temperature
-    name: Temperature
-  - entity: sensor.wtg_bench_gpu_0_gpu_0_performance_state
-    name: Perf State
 ```
 
-If your WTG source entities are different from the example, edit the entity card too.
+These dashboard cards use only the Redline output entities created by the package. If Step 7 succeeded, the cards should work without hostname edits.
 
 ## 9. Expected idle result
 
