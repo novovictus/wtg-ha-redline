@@ -37,7 +37,7 @@ The hostname is the part after `wtg_` and before `_gpu_0_`.
 Expected user flow:
 
 ```text
-WTG MQTT discovery working -> find hostname from discovered entity IDs -> install Redline template package -> add Redline dashboard cards
+WTG MQTT discovery working -> find hostname from discovered entity IDs -> install host-scoped Redline template package -> add host-scoped Redline dashboard cards
 ```
 
 ## Recommended package install shortcut
@@ -65,19 +65,25 @@ mkdir -p /config/packages
 Download the Redline package and replace `YOUR_HOSTNAME` in one step. Replace `<hostname>` with the hostname portion from your discovered WTG entity IDs:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/novovictus/wtg-ha-redline/main/packages/wtg_gpu_redline.yaml | sed 's/YOUR_HOSTNAME/<hostname>/g' > /config/packages/wtg_gpu_redline.yaml
+curl -fsSL https://raw.githubusercontent.com/novovictus/wtg-ha-redline/main/packages/wtg_gpu_redline.yaml | sed 's/YOUR_HOSTNAME/<hostname>/g' > /config/packages/wtg_<hostname>_redline.yaml
 ```
 
 Example for discovered entities beginning with `sensor.wtg_bench_`:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/novovictus/wtg-ha-redline/main/packages/wtg_gpu_redline.yaml | sed 's/YOUR_HOSTNAME/bench/g' > /config/packages/wtg_gpu_redline.yaml
+curl -fsSL https://raw.githubusercontent.com/novovictus/wtg-ha-redline/main/packages/wtg_gpu_redline.yaml | sed 's/YOUR_HOSTNAME/bench/g' > /config/packages/wtg_bench_redline.yaml
+```
+
+For a second WTG host, install a second package file with that host's name:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/novovictus/wtg-ha-redline/main/packages/wtg_gpu_redline.yaml | sed 's/YOUR_HOSTNAME/rog/g' > /config/packages/wtg_rog_redline.yaml
 ```
 
 Verify the placeholder was replaced:
 
 ```sh
-grep YOUR_HOSTNAME /config/packages/wtg_gpu_redline.yaml
+grep YOUR_HOSTNAME /config/packages/wtg_<hostname>_redline.yaml
 ```
 
 No output means the placeholder is gone.
@@ -205,7 +211,7 @@ MAX
 High activity and/or high memory-controller activity with power near the reported limit.
 
 LIMIT
-Home Assistant-side display state for operating-envelope pressure, such as power near the reported cap or temperature near a configured ceiling.
+Home Assistant-side display state for constraint evidence, such as temperature near a configured ceiling or future clock/power-envelope evidence. Near-power-cap operation by itself is treated as MAX, not LIMIT.
 
 SUS
 Telemetry mismatch override. Example: low GPU utilization, low power, low VRAM use, and pinned memory-controller utilization.
