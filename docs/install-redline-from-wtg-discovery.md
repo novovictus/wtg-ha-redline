@@ -8,23 +8,27 @@ Redline does not replace WTG discovery. Redline adds Home Assistant template ent
 
 ## What you will install
 
-This repo provides two things:
+This repo provides two templates:
 
 ```text
 packages/wtg_gpu_redline.yaml
 ```
 
-A Home Assistant package that creates Redline template entities.
+A Home Assistant package template that creates one host-scoped Redline entity set.
 
 ```text
 dashboards/redline-basic.yaml
 ```
 
-A basic dashboard card example that uses those Redline entities.
+A basic dashboard card template that uses one host-scoped Redline entity set.
 
-The package file is a starting template. Copy it into your Home Assistant `/config/packages/` directory, then edit the source entity IDs if your WTG advertised hostname or GPU index is different from the example.
+Copy the package template into your Home Assistant `/config/packages/` directory using a host-specific filename such as:
 
-The dashboard card example uses only the Redline entities created by the package, so it should not require hostname edits once the package is working.
+```text
+/config/packages/wtg_<hostname>_redline.yaml
+```
+
+Then replace `YOUR_HOSTNAME` inside the copied file with the hostname portion from your discovered WTG entity IDs.
 
 ## 1. Confirm your WTG entity IDs
 
@@ -121,10 +125,10 @@ A terminal is not required if you are using File editor, Studio Code Server, or 
 
 ## 3. Copy the Redline package from this repo
 
-Create this file in Home Assistant:
+Create a host-specific package file in Home Assistant:
 
 ```text
-/config/packages/wtg_gpu_redline.yaml
+/config/packages/wtg_<hostname>_redline.yaml
 ```
 
 Copy the contents of this repo file into it:
@@ -139,33 +143,54 @@ Direct repo path:
 https://github.com/novovictus/wtg-ha-redline/blob/main/packages/wtg_gpu_redline.yaml
 ```
 
-Important: before saving, edit the package if your discovered WTG entity IDs are different from the example.
+Important: before saving, replace `YOUR_HOSTNAME` with the hostname from Step 1.
 
-The default example currently references:
+For example, if your discovered entities start with:
 
 ```text
-sensor.wtg_bench_gpu_0_gpu_0_gpu_utilization
-sensor.wtg_bench_gpu_0_gpu_0_memory_controller_utilization
-sensor.wtg_bench_gpu_0_gpu_0_power
-sensor.wtg_bench_gpu_0_gpu_0_power_limit
-sensor.wtg_bench_gpu_0_gpu_0_temperature
-sensor.wtg_bench_gpu_0_gpu_0_vram_used
-sensor.wtg_bench_gpu_0_gpu_0_vram_total
-sensor.wtg_bench_gpu_0_gpu_0_performance_state
+sensor.wtg_bench_
 ```
 
-If your advertised hostname is not `bench`, replace `wtg_bench` with your actual discovered prefix.
-
-For example:
+then save the copied package as:
 
 ```text
-sensor.wtg_bench_gpu_0_gpu_0_power
+/config/packages/wtg_bench_redline.yaml
 ```
 
-might become:
+and replace every `YOUR_HOSTNAME` in the file with:
 
 ```text
-sensor.wtg_myhostname_gpu_0_gpu_0_power
+bench
+```
+
+If your discovered entities start with:
+
+```text
+sensor.wtg_rog_
+```
+
+then save the copied package as:
+
+```text
+/config/packages/wtg_rog_redline.yaml
+```
+
+and replace every `YOUR_HOSTNAME` in the file with:
+
+```text
+rog
+```
+
+For SSH users, this can be done in one command. Example for `bench`:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/novovictus/wtg-ha-redline/main/packages/wtg_gpu_redline.yaml | sed 's/YOUR_HOSTNAME/bench/g' > /config/packages/wtg_bench_redline.yaml
+```
+
+Example for `rog`:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/novovictus/wtg-ha-redline/main/packages/wtg_gpu_redline.yaml | sed 's/YOUR_HOSTNAME/rog/g' > /config/packages/wtg_rog_redline.yaml
 ```
 
 ## 4. Enable Home Assistant packages
@@ -277,16 +302,25 @@ Search for:
 redline
 ```
 
-You should see:
+For a host named `bench`, you should see:
 
 ```text
-binary_sensor.wtg_redline_sus
-sensor.wtg_redline_score
-sensor.wtg_redline_state
-sensor.wtg_redline_summary
+binary_sensor.wtg_bench_redline_sus
+sensor.wtg_bench_redline_score
+sensor.wtg_bench_redline_state
+sensor.wtg_bench_redline_summary
 ```
 
-If those four entities exist and show sensible values, Redline installation succeeded.
+For a host named `rog`, you should see:
+
+```text
+binary_sensor.wtg_rog_redline_sus
+sensor.wtg_rog_redline_score
+sensor.wtg_rog_redline_state
+sensor.wtg_rog_redline_summary
+```
+
+If those four entities exist for your host and show sensible values, Redline installation succeeded for that host.
 
 ## 8. Add the dashboard cards
 
@@ -304,38 +338,33 @@ Home Assistant shows a list of card types. Scroll all the way to the bottom of t
 Manual
 ```
 
-Paste this gauge card:
+Copy the basic card template from:
 
-```yaml
-type: gauge
-entity: sensor.wtg_redline_score
-name: WTG GPU Redline
-min: 0
-max: 100
-needle: true
-severity:
-  green: 0
-  yellow: 20
-  red: 85
+```text
+dashboards/redline-basic.yaml
 ```
 
-Then add another manual card:
+Direct repo path:
 
-```yaml
-type: entities
-title: WTG GPU Redline
-entities:
-  - entity: sensor.wtg_redline_state
-    name: State
-  - entity: sensor.wtg_redline_score
-    name: Redline Score
-  - entity: binary_sensor.wtg_redline_sus
-    name: SUS Override
-  - entity: sensor.wtg_redline_summary
-    name: Summary
+```text
+https://github.com/novovictus/wtg-ha-redline/blob/main/dashboards/redline-basic.yaml
 ```
 
-These dashboard cards use only the Redline output entities created by the package. If Step 7 succeeded, the cards should work without hostname edits.
+Replace `YOUR_HOSTNAME` with the same hostname used in the package file.
+
+For a host named `bench`, the gauge entity should be:
+
+```text
+sensor.wtg_bench_redline_score
+```
+
+For a host named `rog`, the gauge entity should be:
+
+```text
+sensor.wtg_rog_redline_score
+```
+
+These dashboard cards use only the host-scoped Redline output entities created by the package.
 
 ## 9. Expected idle result
 
