@@ -40,6 +40,50 @@ Expected user flow:
 WTG MQTT discovery working -> find hostname from discovered entity IDs -> install Redline template package -> add Redline dashboard cards
 ```
 
+## Recommended package install shortcut
+
+The Home Assistant web-based terminal can be unreliable when pasting large YAML files. A local SSH session is usually cleaner because the package can be downloaded directly from GitHub and edited in the stream before it is written to Home Assistant.
+
+From a local terminal, SSH into Home Assistant:
+
+```sh
+ssh root@homeassistant.local
+```
+
+If `homeassistant.local` does not resolve, use the Home Assistant IP address:
+
+```sh
+ssh root@<home_assistant_ip>
+```
+
+Create the packages directory:
+
+```sh
+mkdir -p /config/packages
+```
+
+Download the Redline package and replace `YOUR_HOSTNAME` in one step. Replace `<hostname>` with the hostname portion from your discovered WTG entity IDs:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/novovictus/wtg-ha-redline/main/packages/wtg_gpu_redline.yaml | sed 's/YOUR_HOSTNAME/<hostname>/g' > /config/packages/wtg_gpu_redline.yaml
+```
+
+Example for discovered entities beginning with `sensor.wtg_bench_`:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/novovictus/wtg-ha-redline/main/packages/wtg_gpu_redline.yaml | sed 's/YOUR_HOSTNAME/bench/g' > /config/packages/wtg_gpu_redline.yaml
+```
+
+Verify the placeholder was replaced:
+
+```sh
+grep YOUR_HOSTNAME /config/packages/wtg_gpu_redline.yaml
+```
+
+No output means the placeholder is gone.
+
+Then continue with the install guide to enable packages, check configuration, restart Home Assistant, and add the dashboard cards.
+
 ## What this is
 
 WTG HA Redline is an example layer for turning WTG MQTT telemetry into Home Assistant dashboard cards. The first target is an arcade-style GPU Redline display with these Home Assistant-side states:
