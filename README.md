@@ -18,10 +18,26 @@ The current basic dashboard card example is here:
 
 - [dashboards/redline-basic.yaml](dashboards/redline-basic.yaml)
 
+Before using the package or dashboard example, replace `YOUR_HOSTNAME` with the hostname portion from your discovered WTG entity IDs.
+
+Example discovered entity:
+
+```text
+sensor.wtg_bench_gpu_0_gpu_0_power
+```
+
+In that example, replace `YOUR_HOSTNAME` with:
+
+```text
+bench
+```
+
+The hostname is the part after `wtg_` and before `_gpu_0_`.
+
 Expected user flow:
 
 ```text
-WTG MQTT discovery working -> install Redline template package -> add Redline dashboard cards
+WTG MQTT discovery working -> find hostname from discovered entity IDs -> install Redline template package -> add Redline dashboard cards
 ```
 
 ## What this is
