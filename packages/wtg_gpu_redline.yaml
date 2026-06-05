@@ -56,11 +56,11 @@ template:
           {% set temp_f = states('sensor.wtg_YOUR_HOSTNAME_gpu_0_gpu_0_temperature') | float(0) %}
           {% set power_pct = (power / limit * 100) if limit > 0 else 0 %}
           {% set activity = [gpu, mem] | max %}
-          {% set score = (activity * 0.55) + (power_pct * 0.35) %}
+          {% set score = (activity * 0.60) + (power_pct * 0.40) %}
           {% if temp_f >= 181 %}
-            {% set score = score + 15 %}
+            {% set score = score + 10 %}
           {% elif temp_f >= 167 %}
-            {% set score = score + 8 %}
+            {% set score = score + 5 %}
           {% endif %}
           {{ [0, [score, 100] | min] | max | round(0) }}
 
