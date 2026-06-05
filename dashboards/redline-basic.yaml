@@ -2,11 +2,11 @@
 #
 # Stock Home Assistant cards only. No custom cards required.
 #
-# Requires packages/wtg_gpu_redline.yaml or equivalent entities.
+# Requires packages/wtg_gpu_redline.yaml or equivalent Redline entities.
 #
-# USER EDIT REQUIRED:
-# Replace YOUR_HOSTNAME with the advertised hostname in your discovered WTG
-# Home Assistant entity IDs.
+# This dashboard example consumes the Redline output entities created by the
+# package. It does not reference WTG source telemetry entities directly and
+# does not require hostname edits.
 
 - type: gauge
   entity: sensor.wtg_redline_score
@@ -30,15 +30,3 @@
       name: SUS Override
     - entity: sensor.wtg_redline_summary
       name: Summary
-    - entity: sensor.wtg_YOUR_HOSTNAME_gpu_0_gpu_0_gpu_utilization
-      name: GPU
-    - entity: sensor.wtg_YOUR_HOSTNAME_gpu_0_gpu_0_memory_controller_utilization
-      name: Memory Controller
-    - entity: sensor.wtg_YOUR_HOSTNAME_gpu_0_gpu_0_power
-      name: Power
-    - entity: sensor.wtg_YOUR_HOSTNAME_gpu_0_gpu_0_power_limit
-      name: Power Limit
-    - entity: sensor.wtg_YOUR_HOSTNAME_gpu_0_gpu_0_temperature
-      name: Temperature
-    - entity: sensor.wtg_YOUR_HOSTNAME_gpu_0_gpu_0_performance_state
-      name: Perf State
