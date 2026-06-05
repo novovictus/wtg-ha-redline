@@ -21,6 +21,9 @@
 #
 # SUS is an override, not a higher load state.
 #
+# LIMIT is reserved for constraint evidence. Near-power-cap operation by itself
+# is treated as MAX, not LIMIT.
+#
 # Note: This package uses Fahrenheit temperature thresholds because Home Assistant
 # may convert WTG's temperature entity to the user's configured unit system.
 
@@ -68,13 +71,10 @@ template:
         unique_id: wtg_YOUR_HOSTNAME_gpu0_redline_state
         state: >
           {% set score = states('sensor.wtg_redline_score') | float(0) %}
-          {% set power = states('sensor.wtg_YOUR_HOSTNAME_gpu_0_gpu_0_power') | float(0) %}
-          {% set limit = states('sensor.wtg_YOUR_HOSTNAME_gpu_0_gpu_0_power_limit') | float(0) %}
           {% set temp_f = states('sensor.wtg_YOUR_HOSTNAME_gpu_0_gpu_0_temperature') | float(0) %}
-          {% set power_ratio = (power / limit) if limit > 0 else 0 %}
           {% if is_state('binary_sensor.wtg_redline_sus', 'on') %}
             SUS
-          {% elif power_ratio >= 0.97 or temp_f >= 181 %}
+          {% elif temp_f >= 181 %}
             LIMIT
           {% elif score >= 75 %}
             MAX
