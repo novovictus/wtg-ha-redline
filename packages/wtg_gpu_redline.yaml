@@ -20,9 +20,9 @@
 # install one copy of this package per host, using a different filename and
 # replacing YOUR_HOSTNAME with each host's advertised hostname.
 #
-# Example files:
-#   /config/packages/wtg_gpu_redline_bench.yaml
-#   /config/packages/wtg_gpu_redline_rog.yaml
+# Recommended package filenames:
+#   /config/packages/wtg_bench_redline.yaml
+#   /config/packages/wtg_rog_redline.yaml
 #
 # Example resulting Redline entities:
 #   sensor.wtg_bench_redline_score
@@ -38,6 +38,10 @@
 #
 # Note: This package uses Fahrenheit temperature thresholds because Home Assistant
 # may convert WTG's temperature entity to the user's configured unit system.
+#
+# The state and summary templates intentionally recompute Redline state instead
+# of referencing other Redline output entity IDs. This avoids breakage if Home
+# Assistant preserves older entity IDs in the entity registry.
 
 template:
   - binary_sensor:
@@ -51,12 +55,7 @@ template:
           {% set vram_total = states('sensor.wtg_YOUR_HOSTNAME_gpu_0_gpu_0_vram_total') | float(1) %}
           {% set vram_pct = (vram_used / vram_total * 100) if vram_total > 0 else 100 %}
           {{ gpu <= 3 and mem >= 95 and power <= 35 and vram_pct <= 10 }}
-        icon: >
-          {% if is_state('binary_sensor.wtg_YOUR_HOSTNAME_redline_sus', 'on') %}
-            mdi:alert-circle
-          {% else %}
-            mdi:check-circle
-          {% endif %}
+        icon: mdi:alert-circle
 
   - sensor:
       - name: "WTG YOUR_HOSTNAME Redline Score"
@@ -82,9 +81,25 @@ template:
       - name: "WTG YOUR_HOSTNAME Redline State"
         unique_id: wtg_YOUR_HOSTNAME_gpu0_redline_state
         state: >
-          {% set score = states('sensor.wtg_YOUR_HOSTNAME_redline_score') | float(0) %}
+          {% set gpu = states('sensor.wtg_YOUR_HOSTNAME_gpu_0_gpu_0_gpu_utilization') | float(999) %}
+          {% set mem = states('sensor.wtg_YOUR_HOSTNAME_gpu_0_gpu_0_memory_controller_utilization') | float(0) %}
+          {% set power = states('sensor.wtg_YOUR_HOSTNAME_gpu_0_gpu_0_power') | float(999) %}
+          {% set limit = states('sensor.wtg_YOUR_HOSTNAME_gpu_0_gpu_0_power_limit') | float(0) %}
           {% set temp_f = states('sensor.wtg_YOUR_HOSTNAME_gpu_0_gpu_0_temperature') | float(0) %}
-          {% if is_state('binary_sensor.wtg_YOUR_HOSTNAME_redline_sus', 'on') %}
+          {% set vram_used = states('sensor.wtg_YOUR_HOSTNAME_gpu_0_gpu_0_vram_used') | float(999999) %}
+          {% set vram_total = states('sensor.wtg_YOUR_HOSTNAME_gpu_0_gpu_0_vram_total') | float(1) %}
+          {% set vram_pct = (vram_used / vram_total * 100) if vram_total > 0 else 100 %}
+          {% set sus = gpu <= 3 and mem >= 95 and power <= 35 and vram_pct <= 10 %}
+          {% set power_pct = (power / limit * 100) if limit > 0 else 0 %}
+          {% set activity = [gpu, mem] | max %}
+          {% set score = (activity * 0.60) + (power_pct * 0.40) %}
+          {% if temp_f >= 181 %}
+            {% set score = score + 10 %}
+          {% elif temp_f >= 167 %}
+            {% set score = score + 5 %}
+          {% endif %}
+          {% set score = [0, [score, 100] | min] | max %}
+          {% if sus %}
             SUS
           {% elif temp_f >= 181 %}
             LIMIT
@@ -95,22 +110,38 @@ template:
           {% else %}
             IDLE
           {% endif %}
-        icon: >
-          {% if is_state('sensor.wtg_YOUR_HOSTNAME_redline_state', 'IDLE') %}
-            mdi:gauge-empty
-          {% elif is_state('sensor.wtg_YOUR_HOSTNAME_redline_state', 'LOAD') %}
-            mdi:gauge-low
-          {% elif is_state('sensor.wtg_YOUR_HOSTNAME_redline_state', 'MAX') %}
-            mdi:gauge-full
-          {% elif is_state('sensor.wtg_YOUR_HOSTNAME_redline_state', 'LIMIT') %}
-            mdi:thermometer-alert
-          {% elif is_state('sensor.wtg_YOUR_HOSTNAME_redline_state', 'SUS') %}
-            mdi:alert-circle
-          {% else %}
-            mdi:gauge
-          {% endif %}
+        icon: mdi:gauge
 
       - name: "WTG YOUR_HOSTNAME Redline Summary"
         unique_id: wtg_YOUR_HOSTNAME_gpu0_redline_summary
         state: >
-          {{ states('sensor.wtg_YOUR_HOSTNAME_redline_state') }} · GPU {{ states('sensor.wtg_YOUR_HOSTNAME_gpu_0_gpu_0_gpu_utilization') }}% · MEM {{ states('sensor.wtg_YOUR_HOSTNAME_gpu_0_gpu_0_memory_controller_utilization') }}% · PWR {{ states('sensor.wtg_YOUR_HOSTNAME_gpu_0_gpu_0_power') }} W
+          {% set gpu = states('sensor.wtg_YOUR_HOSTNAME_gpu_0_gpu_0_gpu_utilization') | float(999) %}
+          {% set mem = states('sensor.wtg_YOUR_HOSTNAME_gpu_0_gpu_0_memory_controller_utilization') | float(0) %}
+          {% set power = states('sensor.wtg_YOUR_HOSTNAME_gpu_0_gpu_0_power') | float(999) %}
+          {% set limit = states('sensor.wtg_YOUR_HOSTNAME_gpu_0_gpu_0_power_limit') | float(0) %}
+          {% set temp_f = states('sensor.wtg_YOUR_HOSTNAME_gpu_0_gpu_0_temperature') | float(0) %}
+          {% set vram_used = states('sensor.wtg_YOUR_HOSTNAME_gpu_0_gpu_0_vram_used') | float(999999) %}
+          {% set vram_total = states('sensor.wtg_YOUR_HOSTNAME_gpu_0_gpu_0_vram_total') | float(1) %}
+          {% set vram_pct = (vram_used / vram_total * 100) if vram_total > 0 else 100 %}
+          {% set sus = gpu <= 3 and mem >= 95 and power <= 35 and vram_pct <= 10 %}
+          {% set power_pct = (power / limit * 100) if limit > 0 else 0 %}
+          {% set activity = [gpu, mem] | max %}
+          {% set score = (activity * 0.60) + (power_pct * 0.40) %}
+          {% if temp_f >= 181 %}
+            {% set score = score + 10 %}
+          {% elif temp_f >= 167 %}
+            {% set score = score + 5 %}
+          {% endif %}
+          {% set score = [0, [score, 100] | min] | max %}
+          {% if sus %}
+            {% set state = 'SUS' %}
+          {% elif temp_f >= 181 %}
+            {% set state = 'LIMIT' %}
+          {% elif score >= 75 %}
+            {% set state = 'MAX' %}
+          {% elif score >= 20 %}
+            {% set state = 'LOAD' %}
+          {% else %}
+            {% set state = 'IDLE' %}
+          {% endif %}
+          {{ state }} · GPU {{ states('sensor.wtg_YOUR_HOSTNAME_gpu_0_gpu_0_gpu_utilization') }}% · MEM {{ states('sensor.wtg_YOUR_HOSTNAME_gpu_0_gpu_0_memory_controller_utilization') }}% · PWR {{ states('sensor.wtg_YOUR_HOSTNAME_gpu_0_gpu_0_power') }} W
